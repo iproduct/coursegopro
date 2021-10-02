@@ -1,0 +1,22 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.cover
+*.out
+
+# vendor library
+.idea
+.DS_Store
+logs/
+/vendor
+.vscode
+.vscode/launch.json
+.yo-rc.json
