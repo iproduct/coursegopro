@@ -1,5 +1,7 @@
+// Package stringutil conatins urility functions for working with strings
 package stringutil
 
+// Reverse returns argument string reversed - rune-wise 
 func Reverse(s string) string {
 	r := []rune(s)
 	for i, j := 0, len(r)-1; i < len(r)/2; i, j = i+1, j-1 {
