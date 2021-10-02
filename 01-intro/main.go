@@ -3,7 +3,7 @@ package main
 import(
 	"fmt"
 	"rsc.io/quote"
-	"github.com/iproduct/coursegopro/01-intro/stringutil"
+	"01-intro/stringutil"
 )
 
 func main() {

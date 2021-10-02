@@ -1,4 +1,4 @@
-// Package stringutil conatins urility functions for working with strings
+// Package stringutil contains utility functions for working with strings
 package stringutil
 
 // Reverse returns argument string reversed - rune-wise 

@@ -4,3 +4,5 @@ go run .
 go get rsc.io/quote
 go mod tidy
 go mod init github.com/iproduct/coursegopro/01-intro
+go list -m all 
+go doc --all stringutil

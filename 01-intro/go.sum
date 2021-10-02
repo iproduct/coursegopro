@@ -1,5 +1,3 @@
-github.com/iproduct/coursego/01-hello-lab v0.0.0-20210812120102-00795c8151e7 h1:lhJadCVfW5P3d581etnU0OyUGYE6gTbZDnFxkuqGu9I=
-github.com/iproduct/coursego/01-hello-lab v0.0.0-20210812120102-00795c8151e7/go.mod h1:NiCcmBpUZ6NJyFyoK6q6V6owz6CFkhKyWVnRG5hoKik=
 golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c h1:qgOY6WgZOaTkIIMiVjBQcw93ERBE4m30iBm00nkL0i8=
 golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 rsc.io/quote v1.5.2 h1:w5fcysjrx7yqtD/aO+QwRjYZOKnaM9Uh2b40tElTs3Y=
