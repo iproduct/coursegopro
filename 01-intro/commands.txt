@@ -1,0 +1,5 @@
+go help gopath
+go env GOPATH
+go run .
+go get rsc.io/quote
+go mod tidy
