@@ -18,8 +18,10 @@ func (slice *ByteSlice) Write(data []byte) (n int, err error) {
 }
 
 func main() {
-	intslice := make([]int, 10, 20)
-	fmt.Println(intslice, len(intslice), cap(intslice))
+	a := make([]int, 10, 20)
+	fmt.Println(a, len(a), cap(a))
+	a[9] = 42
+	fmt.Printf("a[12]=%d\n", a[9])
 
 	var b ByteSlice
 	fmt.Fprintf(&b, "This hour has %d days", 7)
