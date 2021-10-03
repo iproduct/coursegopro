@@ -22,6 +22,8 @@ func main() {
 	fmt.Println(intslice, len(intslice), cap(intslice))
 
 	var b ByteSlice
-	fmt.Fprintf(&b, "This hour has %d days\n", 7)
+	fmt.Fprintf(&b, "This hour has %d days", 7)
+	b = b.Append([]byte(" ABCD"))
+	b.AppendPointer([]byte(" DEEF"))
 	fmt.Printf("%s", b)
 }
