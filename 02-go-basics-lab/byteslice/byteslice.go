@@ -22,6 +22,8 @@ func main() {
 	fmt.Println(a, len(a), cap(a))
 	a[9] = 42
 	fmt.Printf("a[9]=%d\n", a[9])
+	a = append(a, 108)
+	fmt.Println(a, len(a), cap(a))
 
 	var b ByteSlice
 	fmt.Fprintf(&b, "This hour has %d days", 7)
