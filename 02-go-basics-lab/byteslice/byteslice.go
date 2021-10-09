@@ -5,11 +5,11 @@ import "fmt"
 type ByteSlice []byte
 
 func (slice ByteSlice) Append(data []byte) []byte {
-	return append([]byte(slice), data...)
+	return append(slice, data...)
 }
 
 func (slice *ByteSlice) AppendPointer(data []byte) {
-	*slice = append([]byte(*slice), data...)
+	*slice = append(*slice, data...)
 }
 
 func (slice *ByteSlice) Write(data []byte) (n int, err error) {
