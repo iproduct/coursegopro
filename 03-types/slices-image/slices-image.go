@@ -13,6 +13,9 @@ const baseDir = "d:/CourseGO/git/coursego/03-types-lab/slices-image"
 // Pic returns a grayscale pic of size dy * dx
 func Pic(dx, dy int) [][]uint8 {
 	result := make([][]uint8, dy)
+	for i := range(result) {
+		result[i] = make([]uint8, dx)
+	}
 
 	// ...
 	return result

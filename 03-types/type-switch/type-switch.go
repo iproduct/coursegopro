@@ -3,16 +3,18 @@ package main
 import (
 	"fmt"
 	"github.com/iproduct/coursego/03-types-lab/byteslice"
-	"github.com/labstack/gommon/log"
-	"strconv"
 )
+
+//type StringReturnigFunc func() string
 
 func test(val interface{}) string {
 	switch str := val.(type) {
-	case func() string:
-		return str()
 	case string:
 		return str
+	case func() string:
+		return str()
+	case func():
+		return "Void function"
 	case fmt.Stringer:
 		return str.String()
 	default:
@@ -52,24 +54,23 @@ func main() {
 		return "Returned from function f: func() string"
 	}
 	fmt.Printf("test(func() string): %s\n", test(f))
-
-	// 4) Test function type conversion from func(int) string -> MyFunc + error handling
-	f2 := func(n int) string {
-		if n < 0 {
-			panic(fmt.Errorf("Argument should not be negative: %d", n))
-		}
-		return strconv.Itoa(n)
-	}
-
-	result, err := test2(f2, 42)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("\ntest2(func(int) string): %s\n", result)
-
-	result, err = test2(f2, -1)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("\ntest2(func(int) string): %s\n", result)
+	//// 4) Test function type conversion from func(int) string -> MyFunc + error handling
+	//f2 := func(n int) string {
+	//	if n < 0 {
+	//		panic(fmt.Errorf("Argument should not be negative: %d", n))
+	//	}
+	//	return strconv.Itoa(n)
+	//}
+	//
+	//result, err := test2(f2, 42)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//fmt.Printf("\ntest2(func(int) string): %s\n", result)
+	//
+	//result, err = test2(f2, -1)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//fmt.Printf("\ntest2(func(int) string): %s\n", result)
 }

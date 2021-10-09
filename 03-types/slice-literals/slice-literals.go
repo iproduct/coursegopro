@@ -4,7 +4,7 @@ import "fmt"
 
 func main() {
 	q := []int{2, 3, 5, 7, 11, 13}
-	fmt.Println(q) // [2 3 5 7 11 13]
+	fmt.Printf("%#v, len = %d, cap = %d\n", q, len(q), cap(q)) // [2 3 5 7 11 13]
 
 	r := []bool{true, false, true, true, false, true}
 	fmt.Println(r) // [true false true true false true]
