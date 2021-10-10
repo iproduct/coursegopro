@@ -15,9 +15,10 @@ func Pic(dx, dy int) [][]uint8 {
 	result := make([][]uint8, dy)
 	for i := range result {
 		result[i] = make([]uint8, dx)
+		for j := range result[i] {
+			result[i][j] = uint8(i ^ j)
+		}
 	}
-
-	// ...
 	return result
 }
 
@@ -35,9 +36,10 @@ func main() {
 	imageFile := path.Join(baseDir, "image.png")
 	fmt.Println(imageFile)
 	file, err := os.Create(imageFile)
-	defer file.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer file.Close()
+
 	mypic.Encode(Pic, file)
 }

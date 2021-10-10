@@ -50,4 +50,16 @@ func main() {
 	fmt.Println(reslice, len(reslice), cap(reslice))    // [5 7 11]
 	fmt.Println(reslice2, len(reslice2), cap(reslice2)) //
 
+	// returning array value
+	fmt.Printf("%#v\n", returnArray())
 }
+func returnArray() (r [10]int) {
+	r = [10]int{}
+	fmt.Printf("%p\n", &r)
+	defer func(){
+		r[0] = 42
+		fmt.Printf("%p\n", &r)
+	}()
+	return
+}
+
