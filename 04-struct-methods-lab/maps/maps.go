@@ -11,9 +11,9 @@ type Vertex struct {
 }
 
 func main() {
-	var m copymap.GenericMap = make(copymap.GenericMap)
+	var m = make(copymap.GenericMap)
 	m["Bell Labs"] = Vertex{Lat: 40.68433, Long: -74.39967}
-	m2 := copymap.GenericMap{
+	m2 := copymap.GenericMap {
 		"Google":    Vertex{37.42202, -122.08408},
 		"Microsoft": Vertex{52.68433, -49.39967},
 	}
