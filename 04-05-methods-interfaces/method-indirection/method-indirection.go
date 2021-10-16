@@ -31,13 +31,15 @@ func main() {
 	// Pointer receiver methods can be called
 	//with both values and pointers
 	v := Vertex{3, 4}
+	//(&v).Scale(2)
 	v.Scale(2)
 	ScaleFunc(&v, 5)
+	fmt.Printf("%#v\n", v)
 
 	p := &Vertex{4, 3}
 	p.Scale(5)
 	ScaleFunc(p, 2)
-	fmt.Println(v, p)
+	fmt.Printf("%#v : %p\n", v, p)
 
 	// Value receiver methods can be called
 	//with both values and pointers
