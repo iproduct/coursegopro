@@ -24,8 +24,12 @@ func (slice *ByteSlice) Write(data []byte) (n int, err error) {
 
 func main() {
 	var b ByteSlice
-	fmt.Fprintf(&b, "This hour has %d days - ", 7)
-	//b = b.Append([]byte("APPENDED\n"))
-	(*ByteSlice).AppendPointer(&b, []byte("APPENDED\n"))
+	fmt.Fprintf(&b, "This week has %d days - ", 7)
+	b = b.Append([]byte("A\n"))
+	b.AppendPointer([]byte("B\n"))
+	b = (ByteSlice).Append(b, []byte("C\n"))
+	b = (*ByteSlice).Append(&b, []byte("D\n"))
+	//(ByteSlice).AppendPointer(b, []byte("E\n")) // Error: invalid method expression ByteSlice.AppendPointer (needs pointer receiver: (*ByteSlice).AppendPointer)
+	(*ByteSlice).AppendPointer(&b, []byte("F\n"))
 	fmt.Printf("%#v", string(b))
 }
