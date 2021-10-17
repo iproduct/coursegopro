@@ -87,15 +87,17 @@ func main() {
 	//fmt.Println(*(*(*q).T0).xp) // (*(*q).T0).xp is a valid field selector, but xp is nil pointer
 	// and can not be derefeenced
 
+	fmt.Println(t.M2())    // (&t).M2()           M2 expects *T2 receiver
+	fmt.Println(t.M1())    // (&t).M1()           M1 expects T1 receiver
+	fmt.Println(t.M3())    // (&t).M3()           M3 expects *T1 receiver
+	fmt.Println(t.M0())    // (&t).M0()           M0 expects *T0 receiver
+
 	fmt.Println(p.M0())    // ((*p).T0).M0()      M0 expects *T0 receiver
 	fmt.Println(p.M1())    // ((*p).T1).M1()      M1 expects T1 receiver
 	fmt.Println(p.M2())    // p.M2()              M2 expects *T2 receiver
 	fmt.Println(p.M3())    // p.M2()              M2 expects *T2 receiver
 	fmt.Println(p.M4())
-	fmt.Println(t.M2())    // (&t).M2()           M2 expects *T2 receiver
-	fmt.Println(t.M1())    // (&t).M1()           M1 expects T1 receiver
-	fmt.Println(t.M3())    // (&t).M3()           M4 expects *T1 receiver
-	fmt.Println(t.M0())    // (&t).M0()           M0 expects *T0 receiver
+
 	fmt.Println((*q).M0()) // (*q).M0()           M0 expects *T0 receiver
 	//fmt.Println(q.M0())    // (*q).M0 is valid but not a field selector
 }
