@@ -48,10 +48,16 @@ func (p *Path) Scale(f float64) {
 	}
 }
 
+// Append Vertex to Path
+func (p *Path) Append(v Vertex) {
+	*p = append(*p, v)
+}
+
 func main() {
-	var path Path
+	var path Path // zero value
+	fmt.Printf("Path: %#v, Length = %f\n", path, path.Distance())
 	path = Path{{1, 1}, {4, 5}, {4, 1}, {1, 1}}
-	(&path).Scale(10)
-	fmt.Printf("Path: %#v\n", path)
+	path.Append(Vertex{1, 3})
+	//(&path).Scale(10)
 	fmt.Println("Perimeter = ", path.Distance())
 }

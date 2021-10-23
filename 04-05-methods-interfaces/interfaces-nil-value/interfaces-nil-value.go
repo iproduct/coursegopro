@@ -20,8 +20,8 @@ func (t *T) M() {
 
 func main() {
 	var i I
-
-	var t *T
+	describe(i)
+	var t *T // zero value
 	i = t
 	describe(i) //(<nil>, *intbitset_main.T)
 	i.M()       //<nil>

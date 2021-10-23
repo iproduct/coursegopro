@@ -13,7 +13,7 @@ type T1 struct {
 	y int
 }
 func (T1) M1() int     { return 1 }
-func (t1 *T1) M3() int { return t1.y }
+func (*T1) M3() int { return 2}
 
 type PT1 *T1
 
@@ -34,6 +34,7 @@ type T2 struct {
 }
 
 func (*T2) M2() int { return 1 }
+func (T2) M5() int { return 1 }
 
 type Q *T2
 
@@ -45,24 +46,37 @@ var q Q = p
 
 
 func main() {
+	t.M2() // <==> (&t).M3()
+	m5ref := (*T2).M5 // method reference
+	m2ref := (*T2).M2 // method reference
+	m2val := t.M2 // method value
+	m5val := t.M5 // method value
+	fmt.Printf("Ref to M2 method: %v\n", m2ref(&t))
+	fmt.Printf("Ref to M5 method: %v\n", m5ref(&t))
+	fmt.Printf("Value of M5 method: %v\n", m2val())
+	fmt.Printf("Value of M5 method: %v\n", m5val())
+	(&t).M2()
+	//fmt.Println(q.M3())    // (*q).M0 is valid but not a field selector
+	fmt.Println(q.x)    // (*q).M0 is valid but not a field selector
+
 	//t0 := T0 {}
 	//fmt.Println(t0.M0())
 
 	// T1
-	t1 := T1{12}
-	t1p := &T1{12}
-	fmt.Println(t1.M1())
-	fmt.Println(t1p.M1())
-	fmt.Println(t1.M3())
-	fmt.Println(t1p.M3())
-	fmt.Println(T1.M1(t1))
-	//fmt.Println(T1.M3(t1)) // Error: invalid method expression T1.M3 (needs pointer receiver: (*T1).M3)
-	fmt.Println((*T1).M1(&t1))
-	fmt.Println((*T1).M3(t1p))
-	pt1 := PT1(t1p)
-	fmt.Println(pt1.y)
-
-	// T2
+	//t1 := T1{12}
+	//t1p := &T1{12}
+	//fmt.Println(t1.M1())
+	//fmt.Println(t1p.M1())
+	//fmt.Println(t1.M3())
+	//fmt.Println(t1p.M3())
+	//fmt.Println(T1.M1(t1))
+	////fmt.Println(T1.M3(t1)) // Error: invalid method expression T1.M3 (needs pointer receiver: (*T1).M3)
+	//fmt.Println((*T1).M1(&t1))
+	//fmt.Println((*T1).M3(t1p))
+	//pt1 := PT1(t1p)
+	//fmt.Println(pt1.y)
+	//
+	//// T2
 	fmt.Println(t.M0())
 	fmt.Println(t.M1())
 	fmt.Println(t.M3())
@@ -77,27 +91,26 @@ func main() {
 	fmt.Println(t.xp) // (*t.T0).xp
 	fmt.Println(t.y)  // t.T1.y
 
-	fmt.Println(p.z)  // (*p).z
-	fmt.Println(p.y)  // (*p).T1.y
-	fmt.Println(p.x)  // (*(*p).T0).x
-	fmt.Println(p.xp) // (*(*p).T0).xp
-
-	fmt.Println("????", q.x) // (*(*q).T0).x        (*q).x is a valid field selector
-	fmt.Println("!!!", q.xp) // (*(*q).T0)).xp is a valid field selector
-	//fmt.Println(*(*(*q).T0).xp) // (*(*q).T0).xp is a valid field selector, but xp is nil pointer
-	// and can not be derefeenced
-
-	fmt.Println(t.M2())    // (&t).M2()           M2 expects *T2 receiver
-	fmt.Println(t.M1())    // (&t).M1()           M1 expects T1 receiver
-	fmt.Println(t.M3())    // (&t).M3()           M3 expects *T1 receiver
-	fmt.Println(t.M0())    // (&t).M0()           M0 expects *T0 receiver
-
-	fmt.Println(p.M0())    // ((*p).T0).M0()      M0 expects *T0 receiver
-	fmt.Println(p.M1())    // ((*p).T1).M1()      M1 expects T1 receiver
-	fmt.Println(p.M2())    // p.M2()              M2 expects *T2 receiver
-	fmt.Println(p.M3())    // p.M2()              M2 expects *T2 receiver
-	fmt.Println(p.M4())
-
-	fmt.Println((*q).M0()) // (*q).M0()           M0 expects *T0 receiver
-	//fmt.Println(q.M0())    // (*q).M0 is valid but not a field selector
+	//fmt.Println(p.z)  // (*p).z
+	//fmt.Println(p.y)  // (*p).T1.y
+	//fmt.Println(p.x)  // (*(*p).T0).x
+	//fmt.Println(p.xp) // (*(*p).T0).xp
+	//
+	//fmt.Println("????", q.x) // (*(*q).T0).x        (*q).x is a valid field selector
+	//fmt.Println("!!!", q.xp) // (*(*q).T0)).xp is a valid field selector
+	////fmt.Println(*(*(*q).T0).xp) // (*(*q).T0).xp is a valid field selector, but xp is nil pointer
+	//// and can not be derefeenced
+	//
+	//fmt.Println(t.M2())    // (&t).M2()           M2 expects *T2 receiver
+	//fmt.Println(t.M1())    // (&t).M1()           M1 expects T1 receiver
+	//fmt.Println(t.M3())    // (&t).M3()           M3 expects *T1 receiver
+	//fmt.Println(t.M0())    // (&t).M0()           M0 expects *T0 receiver
+	//
+	//fmt.Println(p.M0())    // ((*p).T0).M0()      M0 expects *T0 receiver
+	//fmt.Println(p.M1())    // ((*p).T1).M1()      M1 expects T1 receiver
+	//fmt.Println(p.M2())    // p.M2()              M2 expects *T2 receiver
+	//fmt.Println(p.M3())    // p.M2()              M2 expects *T2 receiver
+	//fmt.Println(p.M4())
+	//
+	//fmt.Println((*q).M0()) // (*q).M0()           M0 expects *T0 receiver
 }
