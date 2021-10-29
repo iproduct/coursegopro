@@ -4,16 +4,16 @@ import "fmt"
 
 func main() {
 	ch := make(chan string)
-	go func(output chan string) {
+	go func() {
 		for i := 0; i < 10; i++ {
-			output <- fmt.Sprintf("sending N=%d", i)
+			ch <- fmt.Sprintf("Sending message number %d", i)
 		}
-		close(output)
-	}(ch)
+		close(ch)
+	}()
 	var val string
 	for ok := true; ok; {
 		val, ok = <-ch
-		fmt.Printf("Received: %#v, %#v\n", val, ok)
+		fmt.Printf("Receiving: %#v, %#v\n", val, ok)
 	}
-	ch <- fmt.Sprintf("where is your towel?")
+	ch <- fmt.Sprintf("... but I have a question ...")
 }
