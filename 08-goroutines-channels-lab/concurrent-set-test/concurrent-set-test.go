@@ -1,7 +1,7 @@
 package main
 
 import (
-	concurrentset "08-goroutines-channels-lab/concurrent-set"
+	"08-goroutines-channels-lab/concurrent-set"
 	"context"
 	"fmt"
 	"math/rand"
@@ -16,7 +16,6 @@ func main() {
 		fmt.Printf("URL: %v\n", url)
 	}
 }
-
 
 func UrlGenerator(ctx context.Context, maxNumber int, visited *concurrentset.ConcurrentHashSet) <-chan string {
 	rand.Seed(time.Now().Unix())
