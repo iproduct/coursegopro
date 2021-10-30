@@ -10,11 +10,8 @@ func main() {
 	c := make(chan mutable)
 
 	go func() {
-		m1 := mutable{42, 12, 5}
-		for _, x := range m1 {
-			fmt.Printf("%#v\n", x)
-		}
-		m1[0] = 314
+		m1 := mutable{42}
+		m1[0] = 342
 		fmt.Printf("In producer 1: %#v: %p\n", m1, &m1)
 		c <- m1
 		m1 = mutable{242}

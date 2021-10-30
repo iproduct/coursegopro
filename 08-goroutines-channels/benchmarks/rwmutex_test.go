@@ -5,7 +5,6 @@ import (
 )
 
 func BenchmarkMain(b *testing.B) {
-	b.ReportAllocs()
 	b.Run("BasicMutex-3-0", func(b *testing.B) {
 		BasicMutex_Load(b, 3, 0)
 	})
