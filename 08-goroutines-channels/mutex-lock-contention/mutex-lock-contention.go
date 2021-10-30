@@ -14,16 +14,20 @@ func main() {
 
 	wg.Add(2)
 	go func() {
+		fmt.Println("go routine 1 trying to acquire mutex", time.Now())
 		mu.Lock()
+		fmt.Println("go routine 1 locking", time.Now())
 		time.Sleep(3 * time.Second)
-		fmt.Println("go routine 1 releasing mutex-atomicint after 3s:", time.Now())
+		fmt.Println("go routine 1 releasing mutex after 3s:", time.Now())
 		mu.Unlock()
 		wg.Done()
 	}()
 	go func() {
-		fmt.Println("go routine 2 trying to acquire mutex-atomicint:", time.Now())
+		fmt.Println("go routine 2 trying to acquire mutex:", time.Now())
 		mu.Lock()
-		fmt.Println("go routine 2 acquired mutex-atomicint after 3s:", time.Now())
+		fmt.Println("go routine 2 acquired mutex after 3s:", time.Now())
+		time.Sleep(1 * time.Second)
+		fmt.Println("go routine 2 releasing mutex after 1s:", time.Now())
 		mu.Unlock()
 		wg.Done()
 	}()
