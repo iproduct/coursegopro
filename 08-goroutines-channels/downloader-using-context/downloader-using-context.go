@@ -13,8 +13,9 @@ import (
 )
 
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
-	urlGen := UrlGenerator(ctx, 5)
+	//ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	urlGen := UrlGenerator(ctx, 5000)
 	resources := DownloadResources(ctx, cancel, urlGen)
 	//for res := range resources {
 	//	fmt.Printf("Url: %+v\n", res)
@@ -39,8 +40,10 @@ func UrlGenerator(ctx context.Context, maxNumber int) <-chan string {
 			case out <- url:
 				fmt.Printf("Generating URL: %s\n", url)
 			case <-ctx.Done():
+				fmt.Println("Canceling UrlGenerator")
 				return
 			}
+			time.Sleep(100 * time.Millisecond)
 		}
 	}()
 	return out
@@ -56,9 +59,10 @@ func DownloadResources(ctx context.Context, cancel context.CancelFunc, urls <-ch
 	go func() {
 		defer close(resources)
 		var wg sync.WaitGroup
+		number := 0
 		for u := range urls {
 			wg.Add(1)
-			go func(url string) {
+			go func(url string, n int) {
 				defer wg.Done()
 				resource := download(ctx, url)
 				select {
@@ -68,9 +72,12 @@ func DownloadResources(ctx context.Context, cancel context.CancelFunc, urls <-ch
 						cancel() //can be called safely from multiple goroutines - after first call it does nothing
 					}
 				case <-ctx.Done():
+					fmt.Printf("Canceling Downloader %d\n", n)
 					fmt.Printf("Quiting goroutine for url: %s\n", url)
 				}
-			}(u)
+				time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond)
+			}(u, number)
+			number++
 		}
 		wg.Wait()
 	}()
@@ -90,7 +97,7 @@ func download(ctx context.Context, urlStr string) Resource {
 	random := rand.Float64()
 	fmt.Printf("Downloading URL: %s\n", urlStr)
 	switch {
-	case random < 0.8:
+	case random >= 0:
 		url, err := url.Parse(urlStr)
 		if err != nil {
 			return Resource{0, err}
@@ -117,5 +124,6 @@ func CalculateTotalSize(resources <-chan Resource) (int, error) {
 		total += resource.size
 		err = resource.err
 	}
+	fmt.Println("Exiting Calculation")
 	return total, err
 }

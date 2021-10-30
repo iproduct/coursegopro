@@ -8,15 +8,15 @@ import (
 // AtomicInt is a concurrent data structure that holds an int.
 // Its zero value is 0.
 type AtomicInt struct {
-	mu sync.Mutex // A lock than can be held by one goroutine at a time.
+	mu sync.Mutex // A mutex-atomicint than can be held by one goroutine at a time.
 	n  int
 }
 
 // Add adds n to the AtomicInt as a single atomic operation.
 func (a *AtomicInt) Add(n int) {
-	a.mu.Lock() // Wait for the lock to be free and then take it.
+	a.mu.Lock() // Wait for the mutex-atomicint to be free and then take it.
 	a.n += n
-	a.mu.Unlock() // Release the lock.
+	a.mu.Unlock() // Release the mutex-atomicint.
 }
 
 // Value returns the value of a.

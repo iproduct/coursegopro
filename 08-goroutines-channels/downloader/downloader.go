@@ -86,11 +86,8 @@ func DownloadResources(urls <-chan string, quit chan struct{}) <-chan Resource {
 
 func IsClosed(ch <-chan struct{}) bool {
 	select {
-	case _, ok := <-ch:
-		if !ok {
-			return true //already closed - return true
-		}
-		return false
+	case <-ch:
+		return true //already closed - return true
 	default:
 		return false // not yet closed - return false
 	}

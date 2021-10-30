@@ -6,7 +6,6 @@ func sendTo(c chan<- int, iter int) {
 	for i := 0; i <= iter; i++ {
 		c <- i
 	}
-
 	close(c)
 }
 
