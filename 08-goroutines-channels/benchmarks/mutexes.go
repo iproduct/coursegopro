@@ -2,7 +2,6 @@ package benchmarks
 
 import (
 	"sync"
-	"time"
 )
 
 type BasicMutex struct {
@@ -18,7 +17,6 @@ func (m *BasicMutex) Store(value int) {
 
 func (m *BasicMutex) Load() int {
 	m.mu.Lock()
-	time.Sleep(100 * time.Nanosecond)
 	defer m.mu.Unlock()
 	return m.value
 }
@@ -36,7 +34,6 @@ func (m *RWMutex) Store(value int) {
 
 func (m *RWMutex) Load() int {
 	m.mu.RLock()
-	time.Sleep(100 * time.Nanosecond)
 	defer m.mu.RUnlock()
 	return m.value
 }
