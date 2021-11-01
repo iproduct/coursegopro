@@ -7,15 +7,36 @@ import (
 	"github.com/iproduct/coursego/06-coroutines-channels/semaphor"
 	"math/rand"
 	"runtime"
+	"sync/atomic"
 	"time"
 )
 
 // Fake a long and difficult work.
-func DoWork(url string, jobs semaphor.Semaphor) {
+func DoWork(url string,
+	ctx context.Context,
+	visited *concurrentset.ConcurrentHashSet,
+	numUrls *uint64,
+	urls chan<- string,
+	jobs semaphor.Semaphor,
+	) {
 	fmt.Println("doing", url)
 	time.Sleep(500 * time.Millisecond)
 	fmt.Println("finished", url)
-	jobs.Release() // release the token
+	defer jobs.Release() // release the token
+
+	for i := 0; i < 10; i++ {
+		newUrl := fmt.Sprintf("%s/%d", url, i)
+		num := atomic.AddUint64(numUrls, 1)
+		fmt.Printf("sending new URL %d: %s\n", num, newUrl)
+		if visited.IsMember(newUrl) || atomic.LoadUint64(numUrls) >= MAX_URLS {
+			continue
+		}
+		select {
+		case urls <- newUrl:
+		case <-ctx.Done():
+			return
+		}
+	}
 }
 
 const MAX_URLS = 300
@@ -23,12 +44,19 @@ const MAX_URLS = 300
 func main() {
 	// concurrentJobs is a buffered channel implemting semaphore that blocks
 	// if more than 20 goroutines are started at once
-	var concurrentJobs = semaphor.New(10000)
+	var concurrentJobs = semaphor.New(10)
+	numUrls := uint64(0)
 	visited := concurrentset.New()
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
-	for url := range UrlGenerator(ctx, MAX_URLS, visited) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	urls := make(chan string, 100)
+	urls <- "http://urls/1"
+	for url := range urls {
+		if atomic.LoadUint64(&numUrls) >= MAX_URLS {
+			cancel()
+			break
+		}
 		concurrentJobs.Acquire() // acquire a  token
-		go DoWork(url, concurrentJobs)
+		go DoWork(url, ctx, visited, &numUrls, urls, concurrentJobs)
 		fmt.Printf("Current number of goroutines: %d\n", runtime.NumGoroutine())
 	}
 }
