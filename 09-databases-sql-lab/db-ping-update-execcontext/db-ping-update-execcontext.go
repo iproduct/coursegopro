@@ -16,6 +16,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer db.Close()
 	// See "Important settings" section.
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
@@ -29,7 +30,7 @@ func main() {
 	}
 
 	log.Printf("Database status: %s\n", status)
-	conn, err := db.Conn(ctx)
+	conn, err := db.Conn(ctx) // EXCLUSIVE USE
 	if err != nil {
 		log.Fatal(err)
 	}
