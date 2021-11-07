@@ -5,6 +5,7 @@ import (
 	"github.com/iproduct/coursego/08-databases/entities"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"os"
+	"strings"
 )
 
 var I2b = []bool{false, true}
@@ -26,8 +27,12 @@ func PrintProjects(entities []entities.Project) {
 func PrintUsers(entities []entities.User) {
 	tableRows := []table.Row{}
 	for _, u := range entities {
+		var projNames []string
+		for _, proj := range u.Projects {
+			projNames = append(projNames, proj.Name)
+		}
 		row := table.Row{u.ID, u.FirstName,u.LastName, u.Email, u.Username, u.Password, u.Active, u.CreatedAt, u.UpdatedAt,
-			fmt.Sprint(u.Projects)}
+			strings.Join(projNames, ", ")}
 		tableRows = append(tableRows, row)
 	}
 	t := table.NewWriter()

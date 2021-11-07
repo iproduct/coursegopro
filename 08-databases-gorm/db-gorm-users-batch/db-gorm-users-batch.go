@@ -54,10 +54,11 @@ func main() {
 	}
 
 	//Get all users
-	result = db.Preload(clause.Associations).Find(&users) // SELECT * FROM users;
+	var usersFound []entities.User
+	result = db.Preload(clause.Associations).Find(&usersFound) // SELECT * FROM users;
 	if result.Error != nil {
 		log.Fatal(result.Error) // returns error
 	}
 	fmt.Printf("Number of users: %d\n", result.RowsAffected) // returns found records count, equals `len(users)`
-	utils.PrintUsers(users)
+	utils.PrintUsers(usersFound)
 }
