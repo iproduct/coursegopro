@@ -14,12 +14,12 @@ var I2b = []bool{false, true}
 func PrintProjects(entities []entities.Project) {
 	tableRows := []table.Row{}
 	for _, p := range entities {
-		row := table.Row{p.ID, p.Name, p.Description, p.Budget, p.StartDate,fmt.Sprint(p.Users)}
+		row := table.Row{p.ID, p.Name, p.Description, p.Budget, p.StartDate, p.Company.Name, p.CompanyRef, fmt.Sprint(p.Users)}
 		tableRows = append(tableRows, row)
 	}
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"ID", "Name", "Description", "Budget", "Start Date", "Users"})
+	t.AppendHeader(table.Row{"ID", "Name", "Description", "Budget", "Start Date", "Company", "Company Ref", "Users"})
 	t.AppendRows(tableRows)
 	t.Render()
 }
@@ -31,7 +31,7 @@ func PrintUsers(entities []entities.User) {
 		for _, proj := range u.Projects {
 			projNames = append(projNames, proj.Name)
 		}
-		row := table.Row{u.ID, u.FirstName,u.LastName, u.Email, u.Username, u.Password, u.Active, u.CreatedAt, u.UpdatedAt,
+		row := table.Row{u.ID, u.FirstName, u.LastName, u.Email, u.Username, u.Password, u.Active, u.CreatedAt, u.UpdatedAt,
 			strings.Join(projNames, ", ")}
 		tableRows = append(tableRows, row)
 	}

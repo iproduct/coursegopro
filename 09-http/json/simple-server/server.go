@@ -22,7 +22,8 @@ func hello(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "hello\n")
 }
 
-func headers(w http.ResponseWriter, r *http.Request) {
+type MyHandler struct{}
+func (_ MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// This handler does something a little more
 	// sophisticated by reading all the HTTP request
@@ -39,15 +40,17 @@ func headers(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
+	mux := http.NewServeMux()
 	// We register our handlers on simple-server routes using the
 	// `09-http.HandleFunc` convenience function. It sets up
 	// the *default router* in the `net/09-http` package and
 	// takes a function as an argument.
-	http.HandleFunc("/hello", hello)
-	http.HandleFunc("/headers", headers)
+	mux.HandleFunc("/hello", hello)
+	//http.HandleFunc("/headers", headers)
+	mux.Handle("/headers", MyHandler{})
 
 	// Finally, we call the `ListenAndServe` with the port
 	// and a handler. `nil` tells it to use the default
 	// router we've just set up.
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", mux)
 }

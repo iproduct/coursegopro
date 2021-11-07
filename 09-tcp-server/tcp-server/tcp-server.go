@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -28,11 +29,17 @@ func handleConnection(ctx context.Context, conn net.Conn) {
 	if err := scanner.Err(); err != nil {
 		fmt.Println("error:", err)
 	}
+	log.Printf("Closing client connection: %#v\n", conn)
 }
 
 func main() {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Minute)
-	ln, err := net.Listen("tcp", "127.0.0.1:8081")
+	lConfig := net.ListenConfig{
+		Control:   nil,
+		KeepAlive: time.Duration(time.Minute),
+	}
+	ln, err := lConfig.Listen(ctx, "tcp", "127.0.0.1:8081")
+	//ln, err := net.Listen("tcp", "127.0.0.1:8081")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -50,7 +57,8 @@ func main() {
 			return
 		default:
 		}
-		fmt.Println("Calling handleConnection")
+		fmt.Printf("Calling handleConnection: %#v\n", conn)
+		fmt.Printf("Current number of goroutines: %d\n", runtime.NumGoroutine())
 		go handleConnection(ctx, conn)
 	}
 }

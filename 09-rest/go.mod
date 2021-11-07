@@ -1,4 +1,4 @@
-module github.com/iproduct/coursego/09-rest
+module github.com/iproduct/coursegopro/09-rest
 
 go 1.15
 

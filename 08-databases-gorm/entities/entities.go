@@ -13,14 +13,15 @@ type Project struct {
 	Budget      float64   `header:"Budget"`
 	StartDate   time.Time `header:"Start Date"`
 	Finished    bool      `header:"Completed" gorm:"'Finished' boolean"`
-	CompanyID   uint      `header:"Company ID"`
+	CompanyRef  uint      `header:"Company Ref"`
+	Company     Company   `gorm:"foreignKey:CompanyRef"`
 	Users       []User    `gorm:"many2many:projects_users;"`
 }
 
 type Company struct {
 	gorm.Model
-	Name     string `header:"Name"`
-	Projects []Project
+	Name     string    `header:"Name" gorm:"unique"`
+	Projects []Project `gorm:"foreignKey:CompanyRef"`
 }
 
 type User struct {

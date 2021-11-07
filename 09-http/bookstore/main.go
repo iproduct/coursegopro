@@ -14,7 +14,7 @@ import (
 
 // ResourcesPath ia basic path to the project in filesystem
 var workDir, _ = os.Getwd()
-var  ResourcesPath = path.Join(workDir)
+var  ResourcesPath = path.Join(workDir, "bookstore")
 
 var tmplAllBooks *template.Template
 //var tmplAllBooks = template.Must(template.New("all-books").Parse(tmplAllBooksStr))
@@ -91,7 +91,9 @@ func showFavs(w http.ResponseWriter, req *http.Request) {
 		rwlock.Unlock()
 		log.Printf("Book ID=%s remove from favourites\n", removeFav)
 	}
+	rwlock.RLock()
 	err := tmplAllBooks.ExecuteTemplate(w, "favs.html", favourites)
+	rwlock.RUnlock()
 	if err != nil {
 		log.Printf("Error executing template: %v\n", err)
 	}
