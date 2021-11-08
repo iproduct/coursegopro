@@ -11,11 +11,6 @@ import (
 	"time"
 )
 
-var (
-	ctx context.Context
-	db  *sql.DB
-)
-
 func main() {
 	db, err := sql.Open("mysql", "root:root@/golang_projects_2021?parseTime=true")
 	if err != nil {
@@ -48,15 +43,11 @@ func main() {
 	projects := GetProjects(ctx, db)
 	utils.PrintProjects(projects)
 
-	// Update project budgets by 10% increase for project after 2020 in a single transaction
-	loc, _ := time.LoadLocation("Europe/Sofia")
-	const shortForm = "2006-Jan-02"
-	startDate, _ := time.ParseInLocation(shortForm, "1991-Jan-01", loc)
-
-	// BEGIN TRANSACTION
-	tx, err := db.BeginTx(ctx, &sql.TxOptions{Isolation: sql.LevelSerializable}) // or db.BeginTx()
+	// Update project budgets by subtracting $10000 from old projects and adding money to new projects after 01.01.2000
+	startDate, _ := time.Parse("2006-Jan-01", "2000-Jan-01")
+	err = UpdateProjectBudgets(ctx, db, 100, startDate)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	// Print projects after update
@@ -65,8 +56,10 @@ func main() {
 }
 
 // Helper functions
-// CreateOrder creates an order for an album and returns the new order ID.
-func UpdateProjectBudgets(ctx context.Context, projectID, quantity, custID int) (orderID int64, err error) {
+
+// UpdateProjectBudgets updates budgets of all projects by subtracting fixed amount from each old project
+// before newProjectsStart and adding it to new projects started after newProjectsStart, divided equally
+func UpdateProjectBudgets(ctx context.Context, db *sql.DB, amount float64, newProjectsStart time.Time) error {
 
 	// Get a Tx for making transaction requests.
 	tx, err := db.BeginTx(ctx, nil)
@@ -76,78 +69,92 @@ func UpdateProjectBudgets(ctx context.Context, projectID, quantity, custID int) 
 	// Defer a rollback in case anything fails.
 	defer tx.Rollback()
 
-	// Confirm that album inventory is enough for the order.
-	var enough bool
-	if err = tx.QueryRowContext(ctx, "SELECT (quantity >= ?) from album where id = ?",
-		quantity, albumID).Scan(&enough); err != nil {
-		if err == sql.ErrNoRows {
-			return fail(fmt.Errorf("no such album"))
-		}
-		return fail(err)
-	}
-	if !enough {
-		return fail(fmt.Errorf("not enough inventory"))
-	}
-
-	// Create a helper function for preparing failure results.
-	fail := func(err error) (int64, error) {
-		return fmt.Errorf("CreateOrder: %v", err)
-	}
-
-	result, execErr := tx.ExecContext(ctx, `UPDATE projects SET budget = ROUND(budget * 1.2) WHERE id = ?;`, projectID)
-	if execErr != nil { // ROLLBSACK IF ERROR
-		if rollbackErr := tx.Rollback(); rollbackErr != nil {
-			log.Fatalf("update failed: %v, unable to rollback: %v\n", execErr, rollbackErr)
-		}
-		log.Fatalf("update failed: %v", execErr)
-	}
-	rows, err := result.RowsAffected()
+	// Selecting all projects with start dates and budgets
+	rows, err := tx.QueryContext(ctx, "SELECT id, name, start_date, budget from projects")
 	if err != nil {
-		log.Fatal(err)
+		return fail(fmt.Errorf("error selecting projects: %v", err))
 	}
-	log.Printf("Total budgets updated: %d\n", rows)
+
+	type projectData struct {
+		Id        int64
+		Name      string
+		Budget    float64
+		StartDate time.Time
+	}
+
+	var results []projectData
+	for rows.Next() {
+		var r projectData
+		err := rows.Scan(&r.Id, &r.Name, &r.StartDate, &r.Budget)
+		if err != nil {
+			return fail(fmt.Errorf("error scanning projects: %v", err))
+		}
+		results = append(results, r)
+	}
+	log.Printf("Project results: %v\n", results)
+
+	sum := 0.0
+	for _, pd := range results {
+		if pd.StartDate.Before(newProjectsStart) {
+			if pd.Budget <= amount {
+				return fail(fmt.Errorf("insufficient budget=$%.2f available in project '%s'", pd.Budget, pd.Name))
+			}
+
+			// reduce old project by amount
+			result, err := tx.ExecContext(ctx, `UPDATE projects SET budget = budget - ? WHERE id = ?;`, amount, pd.Id)
+			if err != nil { // ROLLBACK IF ERROR
+				return fail(fmt.Errorf("update failed: %v", err))
+			}
+			rowsAffected, err := result.RowsAffected()
+			if err != nil || rowsAffected != 1 {
+				return fail(fmt.Errorf("update failed: %v", err))
+			}
+			sum += amount
+			log.Printf("Project %s budget reduced by %f.\n", pd.Name, amount)
+		}
+	}
+	log.Printf("Total old projects budget reduction: %f\n", sum)
 
 	// COMMIT TRANSACTION
 	if err := tx.Commit(); err != nil {
-		log.Fatal(err)
-	}
-
-
-
-
-
-
-	// Update the album inventory to remove the quantity in the order.
-	_, err = tx.ExecContext(ctx, "UPDATE album SET quantity = quantity - ? WHERE id = ?",
-		quantity, albumID)
-	if err != nil {
 		return fail(err)
 	}
-
-	// Create a new row in the album_order table.
-	result, err := tx.ExecContext(ctx, "INSERT INTO album_order (album_id, cust_id, quantity, date) VALUES (?, ?, ?, ?)",
-		albumID, custID, quantity, time.Now())
-	if err != nil {
-		return fail(err)
-	}
-	// Get the ID of the order item just created.
-	orderID, err := result.LastInsertId()
-	if err != nil {
-		return fail(err)
-	}
-
-	// Commit the transaction.
-	if err = tx.Commit(); err != nil {
-		return fail(err)
-	}
-
-	// Return the order ID.
-	return orderID, nil
+	return nil
 }
 
-func fail(err error) {
-	log.Panic(err)
+//// Update the album inventory to remove the quantity in the order.
+//_, err = tx.ExecContext(ctx, "UPDATE album SET quantity = quantity - ? WHERE id = ?",
+//	quantity, albumID)
+//if err != nil {
+//	return fail(err)
+//}
+//
+//// Create a new row in the album_order table.
+//result, err := tx.ExecContext(ctx, "INSERT INTO album_order (album_id, cust_id, quantity, date) VALUES (?, ?, ?, ?)",
+//	albumID, custID, quantity, time.Now())
+//if err != nil {
+//	return fail(err)
+//}
+//// Get the ID of the order item just created.
+//orderID, err := result.LastInsertId()
+//if err != nil {
+//	return fail(err)
+//}
+//
+//// Commit the transaction.
+//if err = tx.Commit(); err != nil {
+//	return fail(err)
+//}
+//
+//// Return the order ID.
+//return orderID, nil
+
+// Create a helper function for preparing failure results.
+func fail(err error) error {
+	fmt.Errorf("UpdateProjectBudgets: %v", err)
+	return err
 }
+
 func GetProjects(ctx context.Context, conn *sql.DB) []entities.Project {
 	rows, err := conn.QueryContext(ctx, "SELECT * FROM projects")
 	if err != nil {
