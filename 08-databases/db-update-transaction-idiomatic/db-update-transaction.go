@@ -74,6 +74,7 @@ func UpdateProjectBudgets(ctx context.Context, db *sql.DB, amount float64, newPr
 	if err != nil {
 		return fail(fmt.Errorf("error selecting projects: %v", err))
 	}
+	defer rows.Close()
 
 	type projectData struct {
 		Id        int64
