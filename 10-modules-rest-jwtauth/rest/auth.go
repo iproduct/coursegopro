@@ -16,14 +16,14 @@ func JwtVerify(next http.Handler) http.Handler {
 
 		var token string
 		if header == "" || len(header) <= len(BEARER_SCHEMA) {
-			respondWithError(w, http.StatusForbidden, "Missing auth token")
+			respondWithError(w, http.StatusUnauthorized, "Missing auth token")
 			return
 		}
 		token = header[len(BEARER_SCHEMA):]
 		token = strings.TrimSpace(token)
 
 		if token == "" {
-			//Token is missing, returns with error code 403 Unauthorized
+			//Token is missing, returns with error code 401 Unauthorized
 			respondWithError(w, http.StatusUnauthorized, "Missing auth token")
 			return
 		}
@@ -34,7 +34,7 @@ func JwtVerify(next http.Handler) http.Handler {
 		})
 
 		if err != nil {
-			respondWithError(w, http.StatusForbidden, err.Error())
+			respondWithError(w, http.StatusUnauthorized, err.Error())
 			return
 		}
 
