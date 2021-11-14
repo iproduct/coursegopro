@@ -1,6 +1,6 @@
 package dao
 
-import "github.com/iproduct/coursego/12-modules-rest-jwtauth/model"
+import "github.com/iproduct/coursegopro/10-modules-rest-jwtauth/model"
 
 type UserRepo interface {
 	Find(start, count int) ([]model.User, error)

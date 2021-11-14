@@ -3,7 +3,7 @@ package rest
 import (
 	"context"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/iproduct/coursego/12-modules-rest-jwtauth/model"
+	"github.com/iproduct/coursegopro/10-modules-rest-jwtauth/model"
 	"net/http"
 	"strings"
 )

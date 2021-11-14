@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/iproduct/coursego/12-modules-rest-jwtauth/rest"
+	"github.com/iproduct/coursegopro/10-modules-rest-jwtauth/rest"
 )
 
 func main() {

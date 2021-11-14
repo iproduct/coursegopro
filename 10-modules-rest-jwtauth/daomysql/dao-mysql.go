@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/iproduct/coursego/12-modules-rest-jwtauth/model"
+	"github.com/iproduct/coursegopro/10-modules-rest-jwtauth/model"
 	"log"
 )
 
