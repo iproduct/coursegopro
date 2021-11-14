@@ -21,10 +21,11 @@ package main
 
 import (
 	"context"
-	pb "github.com/iproduct/coursego/10-grpc-hello/helloworld"
+	pb "github.com/iproduct/coursegopro/10-grpc-hello/helloworld"
 	"google.golang.org/grpc"
 	"log"
 	"net"
+	"strconv"
 )
 
 const (
@@ -39,7 +40,7 @@ type server struct {
 // SayHello implements helloworld.GreeterServer
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	log.Printf("Received: %v", in.GetName())
-	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
+	return &pb.HelloReply{Message: "Hello " + in.GetName() + " -> " + strconv.Itoa(int(in.GetNumber()))}, nil
 }
 
 func main() {

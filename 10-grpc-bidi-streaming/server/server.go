@@ -1,7 +1,7 @@
 package main
 
 import (
-	pm "github.com/iproduct/coursego/10-grpc-bidi-streaming/generated/protomath"
+	pm "github.com/iproduct/coursegopro/10-grpc-bidi-streaming/generated/protomath"
 	"io"
 	"log"
 	"net"
@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-type server struct{
+type server struct {
 	pm.Math_MaxServer
 	pm.UnimplementedMathServer
 }

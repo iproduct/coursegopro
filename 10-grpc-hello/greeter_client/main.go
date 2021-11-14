@@ -19,12 +19,18 @@
 // Package main implements a client for Greeter service.
 package main
 
-import ( "context"; pb "github.com/iproduct/coursego/10-grpc-hello/helloworld"; "log"; "os"; "time";
-   "google.golang.org/grpc" )
+import (
+	"context"
+	pb "github.com/iproduct/coursegopro/10-grpc-hello/helloworld"
+	"google.golang.org/grpc"
+	"log"
+	"os"
+	"time"
+)
 
 const (
 	address     = "localhost:50051"
-	defaultName = "world"
+	defaultName = "TRayan"
 )
 
 func main() {
@@ -41,11 +47,14 @@ func main() {
 	if len(os.Args) > 1 {
 		name = os.Args[1]
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2 * time.Second)
 	defer cancel()
-	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+	for i := 0; i < 10000; i++ {
+		r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name , Number: int32(i)})
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		log.Printf("Greeting: %s", r.GetMessage())
 	}
-	log.Printf("Greeting: %s", r.GetMessage())
+
 }

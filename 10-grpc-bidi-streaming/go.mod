@@ -1,4 +1,4 @@
-module github.com/iproduct/coursego/10-grpc-bidi-streaming
+module github.com/iproduct/coursegopro/10-grpc-bidi-streaming
 
 go 1.15
 

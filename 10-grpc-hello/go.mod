@@ -1,4 +1,4 @@
-module github.com/iproduct/coursego/10-grpc-hello
+module github.com/iproduct/coursegopro/10-grpc-hello
 
 go 1.15
 

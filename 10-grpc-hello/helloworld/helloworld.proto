@@ -14,7 +14,7 @@
 
 syntax = "proto3";
 
-option go_package = "google.golang.org/grpc/examples/helloworld/helloworld";
+option go_package = "github.com/iproduct/coursegopro/10-grpc-hello/helloworld";
 option java_multiple_files = true;
 option java_package = "io.grpc.examples.helloworld";
 option java_outer_classname = "HelloWorldProto";
@@ -30,6 +30,7 @@ service Greeter {
 // The request message containing the user's name.
 message HelloRequest {
   string name = 1;
+  int32 number = 2;
 }
 
 // The response message containing the greetings
